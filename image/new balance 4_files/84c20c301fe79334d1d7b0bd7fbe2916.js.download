@@ -1,0 +1,74 @@
+(function() {
+
+  function insertScript(content, type, id) {
+    var s = document.createElement('script');
+    var body = document.querySelector('body');
+    s.type = type;
+    if (id) {
+      s.id = id;
+    }
+    s.innerText = content;
+    body.appendChild(s);
+  }
+
+  function insertCSS(content) {
+    var sheet = document.createElement('style');
+    var head = document.querySelector('head');
+    sheet.type = 'text/css';
+
+    sheet.innerText = content;
+    head.appendChild(sheet);
+  }
+
+
+
+
+
+
+}());
+
+var dfLayerType = ((window.location.pathname + window.location.search).indexOf('/catalogsearch/result/') > -1) ? 'embedded' : 'classic';
+var dfUrl = '//cdn.doofinder.com/media/js/doofinder-' + dfLayerType + '.7.latest.min.js';
+require([ 'jquery', dfUrl ], function($, doofinder) {
+  $(document).ready(function () {
+    var dfEmbeddedLoaded = function (instance) {
+      var query = (doofinder.core.util.qs.parse(
+        window.location.search.substr(1)
+        ).q || "").trim();
+      instance.layer.launch(query);
+    };
+    var dfLayerOptions = (function () {
+      if (dfLayerType === 'classic') {
+        return {
+          "queryInput": "#search",
+          searchParams:{
+  "filter": {
+  "best_price": {
+    "gte": 0
+  }
+  }                        
+  },
+          "hashid": '84c20c301fe79334d1d7b0bd7fbe2916',
+          "zone": "eu1",
+          "display": {
+            "lang": 'en'
+          }
+        };
+      } else {
+        return {
+          "hashid": "84c20c301fe79334d1d7b0bd7fbe2916",
+          "zone": "eu1",
+          "display": {
+            "lang": "en",
+            "insertionPoint": "#maincontent"
+          },
+          "queryInput": "#search",
+          "callbacks": {
+            "loaded": dfEmbeddedLoaded
+          }
+        };
+      }
+    })();
+    doofinder[dfLayerType].setLayers([dfLayerOptions]);
+  });
+});
